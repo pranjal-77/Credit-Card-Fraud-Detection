@@ -432,16 +432,15 @@ def page_monitor():
     # Recalculate running stats
     fraud_rows = df[df["_score"] >= 0.70]
     st.session_state.fraud_count = int(fraud_rows.shape[0])
-    at_risk = fraud_rows["AMOUNT"].apply(lambda x: float(x.replace("$","").replace(",",""))).sum()
+    at_risk = fraud_rows["AMOUNT"].apply(lambda x: float(str(x).replace("$","").replace(",",""))).sum()
     st.session_state.total_at_risk = at_risk
     st.session_state.total_count = 20
+    at_risk_val = float(at_risk) if at_risk is not None else 0.0
 
     st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
 
     # Metric row
     m1, m2, m3, m4 = st.columns(4)
-    
-    at_risk_val = float(at_risk) if at_risk is not None else 0.0
     fraud_rate = st.session_state.fraud_count / max(st.session_state.total_count, 1) * 100
     avg_risk = df["_score"].mean() * 100
     
