@@ -440,16 +440,18 @@ def page_monitor():
 
     # Metric row
     m1, m2, m3, m4 = st.columns(4)
+    
+    at_risk_val = float(at_risk) if at_risk is not None else 0.0
+    fraud_rate = st.session_state.fraud_count / max(st.session_state.total_count, 1) * 100
+    avg_risk = df["_score"].mean() * 100
+    
     with m1:
         st.metric("TOTAL TRANSACTIONS", f"{st.session_state.total_count:,}", delta="+20")
     with m2:
-        fraud_rate = st.session_state.fraud_count / max(st.session_state.total_count, 1) * 100
         st.metric("FRAUD FLAGGED", str(st.session_state.fraud_count), delta=f"{fraud_rate:.1f}%")
-    at_risk = float(at_risk) if at_risk is not None else 0.0
     with m3:
-        st.metric("AMOUNT AT RISK", "$" + format(float(at_risk), ",.2f"), delta=None)
+        st.metric("AMOUNT AT RISK", f"${at_risk_val:,.2f}", delta=None)
     with m4:
-        avg_risk = df["_score"].mean() * 100
         st.metric("AVG RISK SCORE", f"{avg_risk:.1f}%", delta=None)
 
     st.divider()
